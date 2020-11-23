@@ -1,0 +1,108 @@
+{% extends 'moderatorapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Withdraw Requests</h6>
+                </div>
+                <div class="card-body text-left">
+                    <div class="row">
+                        <div class="col-xl-12 col-sm-6 col-md-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Details</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for req in withdraw_requests %}
+                                    <tr>
+                                        <td>
+                                            <b>Name : </b> {{ req.user.userprofile.full_name }}<br>
+                                            <b>Username : </b>{{ req.user.username }}<br>
+                                            <b>Balance : </b>{{ req.user.userprofile.balance }}<br>
+                                            {% if req.status == 'initiated' %}
+                                            <a href="/moderator/process-request/{{req.id}}/"
+                                               class="btn btn-primary btn-sm">
+                                                Process Request
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <b>Requested Amount : </b> {{ req.amount }}<br>
+                                            <b>Send To : </b> {{ req.send_to }}<br>
+                                            <b>Status : </b> {{ req.status }}<br>
+                                            <b>Reason : </b> {{ req.reason }}<br>
+                                            <b>Requested Date : </b> {{ req.created_on }}<br>
+                                            <b>Processed Date : </b> {{ req.processed_on }}<br>
+                                            <b>Transaction ID : </b> {{ req.transaction_id }}<br>
+                                            <b>Proof : </b>
+                                            {% if req.proof_screenshot %}
+                                            <a href="{{ req.proof_screenshot.url }}" target="_blank">
+                                                View</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                 id="dataTable_paginate">
+                                                {% if is_paginated %}
+                                                <ul class="pagination">
+                                                    {% if page_obj.has_previous %}
+                                                    <li class="paginate_button page-item previous">
+                                                        <a class="page-link "
+                                                           href="?page={{ page_obj.previous_page_number }} ">Prev</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item previous disabled ">
+                                                        <span class="page-link ">Prev</span>
+                                                    </li>
+                                                    {% endif %} {% for i in page_obj.paginator.page_range %}
+                                                    {% if page_obj.number == i %}
+                                                    <li class="paginate_button page-item active ">
+                                                        <span class="page-link ">{{ i }}</span>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link" href="?page={{ i }} ">{{ i }}</a>
+                                                    </li>
+                                                    {% endif %} {% endfor %} {% if page_obj.has_next %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link"
+                                                           href="?page={{ page_obj.next_page_number }} ">Next</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item next disabled ">
+                                                        <span class="page-link ">Next</span>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

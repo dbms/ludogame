@@ -1,0 +1,137 @@
+{% extends 'moderatorapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Match Result</h6>
+                </div>
+                <div class="card-body  text-left">
+                    {% include 'display-message.html' %}
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-4 col-md-3 text-left">
+                            <b>Player1 : </b> {{ match.player1.userprofile.full_name}}
+                            ({{match.player1.username}})<br>
+                            <b>Player2 : </b> {{ match.player2.userprofile.full_name}}
+                            ({{match.player2.username}})<br>
+                            <b>Bid Amount : </b> {{ match.bid_amount }}<br>
+                            <b>Game Code : </b> {{ match.game_code }}<br>
+
+                            <b>Status : </b> {{ match.status }}<br>
+                            <b>Winner : </b> {{ match.winner.userprofile.full_name }}<br>
+                            <b>Date : </b> {{ match.created_on }}<br>
+
+                            <hr>
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+
+                                <button class="btn btn-success" type="submit" id="btn-submit">Save</button>
+                            </form>
+                            <br>
+                            {% for out in game_outputs %}
+                            {% if out.user_says == 'cancelled' %}
+                                <form method="POST" action="/moderator/match/cancel/{{match.id}}/">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit" id="btn-cancel">Cancel Match</button>
+                                </form>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-xl-9 col-sm-4 col-md-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Player1</th>
+                                        <th>Player2</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            {% for out in game_outputs %}
+                                            {% if out.player == match.player1 %}
+                                            <b>Name</b> : {{ out.player.userprofile.full_name }}<br>
+                                            <b>Phone</b> : {{ out.player.username }}<br>
+                                            <b>User Says : </b> {{ out.user_says}}<br><br>
+                                            {% if out.screenshot %}
+                                            <img src="{{out.screenshot.url}}" class="img-thumbnail"/>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% for out in game_outputs %}
+                                            {% if out.player == match.player2 %}
+                                            <b>Name</b> : {{ out.player.userprofile.full_name }}<br>
+                                            <b>Phone</b> : {{ out.player.username }}<br>
+                                            <b>User Says : </b> {{ out.user_says}}<br><br>
+                                            {% if out.screenshot %}
+                                            <img src="{{out.screenshot.url}}" class="img-thumbnail"/>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+ $(document).ready(function() {
+    $(document).on("click", "#btn-submit", function(e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        var title = 'Confirm winner - ' + $('#id_winner option:selected').text();
+        Swal.fire({
+            title: title,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4e73df',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes',
+            footer: 'You will not be able to change it.'
+        }).then((result) => {
+            if (result.value) {
+                form.submit();
+            }
+        })
+    });
+
+    $(document).on("click", "#btn-cancel", function(e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        Swal.fire({
+            title: "Confirm Match Cancellation",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4e73df',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes',
+            footer: 'You will not be able to change it.'
+        }).then((result) => {
+            if (result.value) {
+                form.submit();
+            }
+        })
+    });
+});
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+{% endblock %}

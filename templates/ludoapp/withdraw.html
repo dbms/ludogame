@@ -1,0 +1,108 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Contact Support</h6>
+            </div>
+            <div class="card-body  text-left">
+                {% include 'display-message.html' %}
+                 <small id="hint_id_bid_amount" class="form-text text-muted">
+                    <b>***ALERT***<br>
+                        You will not be able to play until your request is processed.
+                    </b><br>
+                     <br>
+                     <b>Current Balance: {{balance}}</b>
+                </small>
+                <hr>
+                <form method="POST" class="text-left" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-xl-12 col-sm-6 col-md-3">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="form-group">
+                                <button class="btn btn-warning  btn-sm" type="submit" id="btn-submit">Submit Request</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Withdrawl Request History(Last 10)</h6>
+            </div>
+            <div class="card-body  text-center">
+                <div class="table-responsive text-left">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Details</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for history in withdraw_history %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <b>Amount : </b> {{ history.amount }}<br>
+                                <b>Send To : </b> {{ history.send_to }}<br>
+                                <b>Status : </b> {{ history.status }}<br>
+                                <b>Reason : </b> {{ history.reason }}<br>
+                                <b>Submit Date : </b> {{ history.created_on }}<br>
+                                <b>Processed Date : </b> {{ history.processed_on }}<br>
+                                <b>Transaction ID : </b> {{ history.transaction_id }}<br>
+                                <b>Proof : </b>
+                                {% if history.proof_screenshot %}
+                                <a href="{{ history.proof_screenshot.url }}" target="_blank">
+                                    View</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+ {% if request.user %}
+    $('#id_send_to').val({{request.user.username}});
+ {% endif %}
+
+ $(document).ready(function() {
+    $(document).on("click", "#btn-submit", function(e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        Swal.fire({
+            title: 'Confirm?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4e73df',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes',
+            footer: 'You will not be able to cancel it.'
+        }).then((result) => {
+            if (result.value) {
+                form.submit();
+            }
+        })
+    });
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+{% endblock %}
+

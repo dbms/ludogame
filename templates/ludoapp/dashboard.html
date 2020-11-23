@@ -1,0 +1,31 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% include 'display-message.html' %}
+
+<form method="POST">
+    <div class="row">
+        <div class="col-xl-4 col-sm-4 col-md-3">
+            {% csrf_token %}
+            {{form.bid_amount|as_crispy_field}}
+        </div>
+        <div class="col-xl-3 col-sm-4 col-md-3">
+            <div class="form-group left">
+                <button class="btn btn-success btn-sm" type="submit"><b>Set Challenge</b></button>
+                <img src="{% static 'images/dice.gif' %}" class="img-thumbnail" style="background:None;border:0;height:40px" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="id_refresh">
+    {% include 'ludoapp/matches.html' %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}

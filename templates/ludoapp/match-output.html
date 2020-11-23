@@ -1,0 +1,75 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Submit Match Result</h6>
+            </div>
+            <div class="card-body  text-center">
+                {% include 'display-message.html' %}
+
+                <form method="POST" class="text-left" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-xl-12 col-sm-6 col-md-3">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="form-group">
+                                <button class="btn btn-warning  btn-sm" type="submit" id="btn-submit">Submit Result</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+                <img id="id_image_preview" src="" alt=""
+                     class="img-thumbnail"/>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#id_image_preview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#id_screenshot").change(function() {
+        readURL(this);
+    });
+
+  $(document).ready(function() {
+    $(document).on("click", "#btn-submit", function(e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        Swal.fire({
+            title: 'Confirm?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4e73df',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes',
+            footer: 'You will not be able to change it.'
+        }).then((result) => {
+            if (result.value) {
+                form.submit();
+            }
+        })
+    });
+});
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+{% endblock %}

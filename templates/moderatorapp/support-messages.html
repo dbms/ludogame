@@ -1,0 +1,104 @@
+{% extends 'moderatorapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Support Messages</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-xl-12 col-sm-6 col-md-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Contact Mobile</th>
+                                        <th>Verified</th>
+                                        <th>Available</th>
+                                        <th>Message</th>
+                                        <th>Screenshot</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for message in messages %}
+                                    <tr>
+                                        <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                                        <td>{{ message.user.userprofile.full_name }}</td>
+                                        <td>{{ message.user.username }}</td>
+                                        <td>{{ message.contact_mobile }}</td>
+                                        <td>{{ message.user.userprofile.is_verified }}</td>
+                                        <td>{{ message.user.userprofile.is_available }}</td>
+                                        <td>{{ message.message }}</td>
+                                        <td>
+                                            {% if message.attach_screenshot %}
+                                            <a href="{{ message.attach_screenshot.url }}" target="_blank">
+                                                View</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ message.created_at }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                 id="dataTable_paginate">
+                                                {% if is_paginated %}
+                                                <ul class="pagination">
+                                                    {% if page_obj.has_previous %}
+                                                    <li class="paginate_button page-item previous">
+                                                        <a class="page-link "
+                                                           href="?page={{ page_obj.previous_page_number }} ">Prev</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item previous disabled ">
+                                                        <span class="page-link ">Prev</span>
+                                                    </li>
+                                                    {% endif %} {% for i in page_obj.paginator.page_range %}
+                                                    {% if page_obj.number == i %}
+                                                    <li class="paginate_button page-item active ">
+                                                        <span class="page-link ">{{ i }}</span>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link" href="?page={{ i }} ">{{ i }}</a>
+                                                    </li>
+                                                    {% endif %} {% endfor %} {% if page_obj.has_next %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link"
+                                                           href="?page={{ page_obj.next_page_number }} ">Next</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item next disabled ">
+                                                        <span class="page-link ">Next</span>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

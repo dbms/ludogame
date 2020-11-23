@@ -1,0 +1,90 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Transactions History</h6>
+
+                <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <b>Coin Balance : {{balance}}</b>
+                </a>
+            </div>
+            <div class="card-body text-left">
+                <div class="alert alert-success">
+                    <strong><b>Coin Balance : {{balance}}</b></strong>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Details</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>
+                                <b>Amount : </b> ({{ transaction.amount }})<br>
+                                <b>Mode : </b> {{ transaction.mode }}<br>
+                                <b>Balance After : </b> {{ transaction.user_balance }}<br>
+                                <b>Transaction ID : </b> {{ transaction.transaction_id }}<br>
+                                <b>Date : </b> {{ transaction.created_on }}<br>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                    {% if is_paginated %}
+                                    <ul class="pagination">
+                                        {% if page_obj.has_previous %}
+                                        <li class="paginate_button page-item previous">
+                                            <a class="page-link "
+                                               href="?page={{ page_obj.previous_page_number }} ">Prev</a>
+                                        </li>
+                                        {% else %}
+                                        <li class="paginate_button page-item previous disabled ">
+                                            <span class="page-link ">Prev</span>
+                                        </li>
+                                        {% endif %} {% for i in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == i %}
+                                        <li class="paginate_button page-item active ">
+                                            <span class="page-link ">{{ i }}</span>
+                                        </li>
+                                        {% else %}
+                                        <li class="paginate_button page-item ">
+                                            <a class="page-link" href="?page={{ i }} ">{{ i }}</a>
+                                        </li>
+                                        {% endif %} {% endfor %} {% if page_obj.has_next %}
+                                        <li class="paginate_button page-item ">
+                                            <a class="page-link"
+                                               href="?page={{ page_obj.next_page_number }} ">Next</a>
+                                        </li>
+                                        {% else %}
+                                        <li class="paginate_button page-item next disabled ">
+                                            <span class="page-link ">Next</span>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends 'moderatorapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">All Matches</h6>
+                </div>
+                <div class="card-body text-center">
+                    {% include 'display-message.html' %}
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-4 col-md-3 text-left">
+                            <form method="GET">
+                                <div id="div_id_match_status" class="form-group">
+                                    <label for="id_match_status" class="">
+                                        Match Status
+                                    </label>
+                                    <div class="">
+                                        <select id="id_match_status" name="match_status"
+                                                class="textinput textInput form-control">
+                                            <option value="">All</option>
+                                            <option value="inprogress">In Progress</option>
+                                            <option value="over">Over</option>
+                                            <option value="open">Open</option>
+                                            <option value="accepted">Accepted</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="div_id_first_name" class="form-group">
+                                    <label for="id_first_name" class="">
+                                        First name
+                                    </label>
+                                    <div class=""><input type="text" name="first_name" maxlength="30"
+                                                         value="{{first_name}}"
+                                                         class="textinput textInput form-control" id="id_first_name">
+                                    </div>
+                                </div>
+                                <div id="div_id_last_name" class="form-group">
+                                    <label for="id_last_name" class="">
+                                        Last name
+                                    </label>
+                                    <div class="">
+                                        <input type="text" name="last_name" maxlength="30" value="{{last_name}}"
+                                               class="textinput textInput form-control" id="id_last_name">
+                                    </div>
+                                </div>
+                                <div id="div_id_phone" class="form-group">
+                                    <label for="id_phone" class="">
+                                        Phone
+                                    </label>
+                                    <div class="">
+                                        <input type="text" name="phone" maxlength="30" value="{{phone}}"
+                                               class="textinput textInput form-control" id="id_phone"></div>
+                                </div>
+                                <div id="div_id_days" class="form-group">
+                                    <label for="id_days" class="">
+                                        Days
+                                    </label>
+                                    <div class="">
+                                        <input type="number" name="days" maxlength="30" value="{{days}}"
+                                               class="textinput textInput form-control" id="id_days"></div>
+                                </div>
+                                <div id="div_id_game_code" class="form-group">
+                                    <label for="id_game_code" class="">
+                                        Game Code
+                                    </label>
+                                    <div class="">
+                                        <input type="number" name="game_code" maxlength="30" value="{{game_code}}"
+                                               class="textinput textInput form-control" id="id_game_code"></div>
+                                </div>
+                                <button class="btn btn-success" type="submit">Filter</button>
+                            </form>
+                            <br>
+                        </div>
+
+                        <div class="col-xl-9 col-sm-4 col-md-3">
+                            <div class="table-responsive text-left">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Match Details</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for match in matches %}
+                                    <tr>
+                                        <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                                        <td>
+                                            <b>Player1 : </b> {{ match.player1.userprofile.full_name }}<br>
+                                            <b>Player2 : </b> {{ match.player2.userprofile.full_name }}<br>
+                                            <b>Bid Amount : </b> {{ match.bid_amount }}<br>
+                                            <b>Game Code : </b> {{ match.game_code }}
+                                        </td>
+                                        <td>
+                                            <b>Status : </b> {{ match.status }}<br>
+                                            <b>Winner : </b> {{ match.winner.userprofile.full_name }}<br>
+                                            <b>Date : </b> {{ match.created_on }}<br>
+                                        </td>
+                                        <td>
+                                            <a href="/moderator/match/{{match.id}}/" class="btn btn-primary btn-sm">
+                                                {% if match.status == 'inprogress' %}
+                                                Decide Result
+                                                {% else %}
+                                                View Result
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                 id="dataTable_paginate">
+                                                {% if is_paginated %}
+                                                <ul class="pagination">
+                                                    {% if page_obj.has_previous %}
+                                                    <li class="paginate_button page-item previous">
+                                                        <a class="page-link "
+                                                           href="?page={{ page_obj.previous_page_number }} ">Prev</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item previous disabled ">
+                                                        <span class="page-link ">Prev</span>
+                                                    </li>
+                                                    {% endif %} {% for i in page_obj.paginator.page_range %}
+                                                    {% if page_obj.number == i %}
+                                                    <li class="paginate_button page-item active ">
+                                                        <span class="page-link ">{{ i }}</span>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link" href="?page={{ i }} ">{{ i }}</a>
+                                                    </li>
+                                                    {% endif %} {% endfor %} {% if page_obj.has_next %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a class="page-link"
+                                                           href="?page={{ page_obj.next_page_number }} ">Next</a>
+                                                    </li>
+                                                    {% else %}
+                                                    <li class="paginate_button page-item next disabled ">
+                                                        <span class="page-link ">Next</span>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    var obj = document.getElementById("id_match_status");
+    for(i=0; i<obj.options.length; i++){
+        if(obj.options[i].value == "{{match_status}}"){
+            obj.selectedIndex = i;
+        }
+}
+
+
+</script>
+{% endblock %}

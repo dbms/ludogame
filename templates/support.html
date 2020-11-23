@@ -1,0 +1,84 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Contact Support</h6>
+            </div>
+            <div class="card-body  text-center">
+                {% include 'display-message.html' %}
+
+                <form method="POST" class="text-left" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-xl-12 col-sm-6 col-md-3">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="form-group">
+                                <button class="btn btn-success  btn-sm" type="submit" id="btn-submit">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Support History(Last 10)</h6>
+            </div>
+            <div class="card-body  text-center">
+                <div class="table-responsive text-left">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Details</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sup in support_history %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <b>Message : </b> {{ sup.message }}<br>
+                                <b>Contact Mobile : </b> {{ sup.contact_mobile }}<br>
+                                <b>Date : </b> {{ sup.created_at }}<br>
+                                <b>Screenshot : </b>
+                                {% if sup.attach_screenshot %}
+                                <a href="{{ sup.attach_screenshot.url }}" target="_blank">
+                                    View</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+ {% if request.user %}
+    $('#id_contact_mobile').val({{request.user.username}});
+ {% endif %}
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}
+

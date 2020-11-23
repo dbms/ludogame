@@ -1,0 +1,26 @@
+{% extends 'registration/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="text-left">
+    <h1 class="h4 text-gray-900 mb-4">Login Here</h1>
+</div>
+
+<form class="user" method="post">
+    {% csrf_token %} {{ form|crispy }}
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <button type="submit" class="btn btn-primary">Login</button>
+    <hr>
+
+    <div class="text-center">
+        <a class="small">Forgot Password? Then Contact Admin
+        </a>
+        <br>
+        <a class="small" href="/">Go Back</a>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+1. Remove the all migrations files
+  find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+  find . -path "*/migrations/*.pyc"  -delete
+
+2.
+sudo su - postgres
+psql
+CREATE DATABASE ludodb;
+CREATE USER ludouser WITH PASSWORD 'password';
+ALTER ROLE ludouser SET client_encoding TO 'utf8';
+ALTER ROLE ludouser SET default_transaction_isolation TO 'read committed';
+ALTER ROLE ludouser SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE ludodb TO ludouser;
+\q
+exit

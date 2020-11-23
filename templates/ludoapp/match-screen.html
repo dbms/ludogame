@@ -1,0 +1,107 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Match Screen</h6>
+            </div>
+            <div class="card-body  text-center">
+                {% include 'display-message.html' %}
+                {% if form.instance.game_code %}
+                <span class="text"><h5>Game Code</h5>
+                </span>
+                 <span class="icon text-gray-600">
+                    <input type="text" style="border:0;text-align:center" readonly
+                           value="{{form.instance.game_code}}" id="id_game_code" />
+                     </span>
+                <button class="btn btn-light btn-sm" onclick="copyText()">
+                  Copy Code
+                </button>
+                {% if form.instance.status == 'inprogress' %}
+                <br>
+                <br>
+                <h6>Never forget to take screenshot of the game result in LUDOKING app.</h6>
+                <a href="/save-game-output/{{ form.instance.uuid }}/" class="btn btn-success btn-sm">
+                    Match Over? Submit Result
+                </a>
+                <br><br>
+                {% else %}
+                <br><br>
+                <div class="alert alert-warning">
+                    <strong>This match is {{form.instance.status}}</strong>
+                </div>
+                {% if form.instance.winner %}
+                <div class="alert alert-success">
+                    <strong> Winner is {{form.instance.winner.userprofile.full_name }}</strong>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% elif form.instance.status == 'cancelled' %}
+                <div class="alert alert-warning">
+                    <strong>This match is cancelled by the challenger.</strong>
+                </div>
+                <div class="text-center">
+                    <a class="small" href="/dashboard/">Play Another Match Here</a>
+                    <br><br>
+                </div>
+
+                {% elif form.instance.status == 'accepted' %}
+                <div class="alert alert-warning">
+                    <strong>Match will be cancelled if game code is not entered within 90 seconds.</strong>
+                </div>
+                {% if user == form.instance.player1 %}
+                <form method="POST">
+                    <div class="row text-left">
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                        </div>
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                            <div class="form-group text-left">
+                                <button class="btn btn-success" type="submit">Send Game Code</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                <h3>Wait for other player to enter the code</h3>
+                <!--   <button class="btn btn-success" onclick="location.reload();">Refresh Page</button>-->
+                {% endif %}
+
+                {% else %}
+                <h1>You shouldn't be here. Go Home</h1>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function copyText() {
+      var copyText = document.getElementById("id_game_code");
+      copyText.select();
+      document.execCommand("copy");
+    }
+
+    {% if user == form.instance.player2 and form.instance.status == 'accepted' %}
+        setTimeout(function(){
+           window.location.reload(1);
+        }, 5000);
+    {% endif %}
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

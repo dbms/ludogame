@@ -1,0 +1,94 @@
+{% extends 'ludoapp/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Buy Coins Here</h6>
+
+                <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <b>Coin Balance : {{balance}}</b>
+                </a>
+            </div>
+            <div class="card-body  text-center">
+                {% include 'display-message.html' %}
+                <div class="alert alert-success">
+                    <strong><b>Coin Balance : {{balance}}</b></strong>
+                </div>
+
+                <img src="{% static 'images/bitcoin.jpg' %}" class="img-thumbnail" />
+                <br>
+                <b>Add coins for free</b><br>
+                <b>Minimum Deposit: 20</b>
+                <br><br>
+                <a href="#" class="btn btn-success btn-circle btn-sm">
+                    <i class="fas fa-check"></i>
+                </a>
+                <a href="#" class="btn btn-light btn-icon-split">
+                    <input type="text" style="border:0;width:210px" readonly
+                           value="Copy Nothing" id="id_upi_id"/>
+                    <span class="icon text-gray-600" id="copyBtn">
+                        <button class="btn btn-light btn-sm" onclick="copyText()">
+                          Copy
+                        </button>
+                    </span>
+                </a>
+                <br> <br>
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                        </div>
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                            {% csrf_token %}
+                            {{form.amount|as_crispy_field}}
+                        </div>
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                            {{form.transaction_id|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-sm-4 col-md-3">
+                        </div>
+                        <div class="col-xl-3 col-sm-4 col-md-3">
+                            <div class="form-group text-center">
+                                <button class="btn btn-success" type="submit">Add Coin</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-xl-4 col-md-3 mb-2">
+                    </div>
+                    <div class="col-xl-8 col-md-6 mb-4">
+                            <span class="text-left">
+                            <ul>
+                                <li>Minimum Deposit: 20 </li>
+                                <li>Coins will be credited in your account immediately.</li>
+                            </ul>
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    function copyText() {
+      var copyText = document.getElementById("id_upi_id");
+      copyText.select();
+      document.execCommand("copy");
+    }
+
+
+</script>
+{% endblock %}

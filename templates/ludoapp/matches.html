@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Open Matches ({{open_matches.count}})</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="open_matches_dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th style="width:75%">Player</th>
+                            <th style="width:10%">Coins</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for match in open_matches %}
+                        <tr>
+                            <td>{{ match.player1_name }}
+                                {% if match.player2_name %}
+                                vs {{match.player2_name }} {% endif %}
+                            </td>
+
+                            <td>{{ match.bid_amount }}</td>
+                            <td>
+                                {% if match.player1 == user %}
+                                {% if match.status == 'accepted' %}
+                                <a href="/match-screen/{{match.uuid}}/" class="btn btn-success btn-sm"
+                                   style="margin-bottom:5px">
+                                    Play
+                                </a>
+                                {% endif %}
+                                <form method="POST" action="/cancel/{{match.uuid}}/">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Cancel
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="POST" action="/play/{{match.uuid}}/">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Play
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12 col-md-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ongoing Matches ({{ongoing_matches.count|add:4}})</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th style="width:85%">Name</th>
+                            <th style="width:15%">Coins</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for match in ongoing_matches %}
+                        <tr>
+                            <td>{{ match.player1_name }} vs {{match.player2_name }}
+                            </td>
+                            <td>{{ match.bid_amount }}
+                                <br>
+                                {% if user == match.player1 or user == match.player2 %}
+                                <a href="/match-screen/{{match.uuid}}/" class="btn btn-success btn-sm"
+                                   style="margin-bottom:5px">
+                                    See
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
