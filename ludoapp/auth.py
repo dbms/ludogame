@@ -1,7 +1,4 @@
 import uuid
-from unittest import mock
-import requests
-import requests_mock
 from random import randint
 
 from django.contrib import messages
